@@ -1,0 +1,6 @@
+// NOTE SUL PROGETTO
+
+Ricorda che quando vai a creare Hdfs examples, per gli Hosts dei Data Nodes dovrai manualmente creare e aggiungere delle
+istanze di HardDriveStorage, altrimenti il metodo writeAndPredictTime() non funziona.
+
+Come istanziare HardDriveStorage: serve eseguire il metodo init(), che configura le settings predefinite per conto suo.

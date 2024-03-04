@@ -1,0 +1,23 @@
+Features:
+- file transfer simulation
+- replication
+
+
+File transfer:
+
+- aggiungere la network topology a HdfsExample0
+
+- fare in modo che i cloudlets possono essere allocati solo alle Vms con lo stesso HdfsType (client o data node),
+  al momento il problema è aggirato dal fatto che faccio manualmente una cloudlet bind, ma idealmente non dovrei aver
+  bisogno di farla, e il programma fa tutto in automatico => questo forse non è fattibile... magari dovrò in futuro
+  creare l'HDFS master node che fa direttamente lui i binds.
+
+IDEAS:
+- aggiungere un sistema di tags per le VMs in modo che possiamo settare chi è un client e chi è un data node, e poi il
+  resto viene gestito dal broker correttamente in automatico, e poi il broker nei logs può anche dire "client bla bla"
+  "data node bla bla" perchè sa chi sono i clients e chi sono i data nodes
+
+- idealmente in HDFS c'è proprio un ente a parte che gestisce dove vanno scritti i files, magari dovrei implementare
+  quello invece che far passare tutto per il broker, che non è realistico. Sarebbe come una sorta di broker secondario
+  a cui il broker primario chiede dove andare a scrivere i files, e in questo modo posso eliminare il fatto che al
+  momento devo dire io a prescindere quali sono le VMs di destinazione
