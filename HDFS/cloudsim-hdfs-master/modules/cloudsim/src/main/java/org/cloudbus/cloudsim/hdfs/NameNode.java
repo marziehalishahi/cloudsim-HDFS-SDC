@@ -80,10 +80,8 @@ public class NameNode extends SimEntity {
         setMapDataNodeToUsedSpace(new HashMap<Integer, Double>());
 
 
-
         // setDefaultBlockSize(defaultBlockSize);
         setDefaultReplicas(defaultReplicas);
-
 
     }
 
@@ -139,7 +137,7 @@ public class NameNode extends SimEntity {
         this.clientList.add(currentClientId);
         //for (Integer i : getClientList())
         //    Log.printLine("Lista di Clients in NameNode: " + i);
-        // aggiunge alla mappa il client id e il corrispondente broker id, necessario per rispedire indietro gli eventi
+        // شناسه مشتری و شناسه کارگزار مربوطه را به نقشه اضافه می کند که برای ارسال رویدادها ضروری است
         this.mapClientToBroker.put(currentClientId, currentBrokerId);
     }
 
@@ -180,6 +178,7 @@ public class NameNode extends SimEntity {
         //درصد استفاده از DataNode فعلی را تنظیم می کنیم که 0٪ است.
         this.mapDataNodeToUsage.put(currentDataNodeId, 0.0);
         this.mapDataNodeToUsedSpace.put(currentDataNodeId,0.0);
+        this.dataNodeStorageMap.put(currentDataNodeId,new DataNodeStorage());
 
         // اگر رک از قبل موجود نیست، استفاده از آن را روی 0% تنظیم می‌کنم، اما دیگر این کار را انجام نمی‌دهم،
         // زیرا بهmap دیگری نیز نیاز دارم که هر rack را به یک datacenter نگاشت کند،
@@ -356,7 +355,7 @@ public class NameNode extends SimEntity {
                 // سپس utiltzation را محاسبه میکنیم
                 double usageStatusPercentage = (usedSpace / totalCapacity) * 100;
 
-                usageStatusPercentage=50;
+                usageStatusPercentage=30;
 
                 // لول ها را بر اساس درصد utilization اعمال میکنیم
                 if (usageStatusPercentage >= 70 && usageStatusPercentage <= 100) {
