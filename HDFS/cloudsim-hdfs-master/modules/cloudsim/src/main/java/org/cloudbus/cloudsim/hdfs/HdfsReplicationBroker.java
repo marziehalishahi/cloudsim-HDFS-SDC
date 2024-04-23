@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 
 //  یک broker معمولی است، اما هیچ ماشین مجازی را در هنگام اجرا اختصاص نمی‌دهد،
-// تنها نقش آن ارسال cloudlets تکراری به vms مناسب است.
+// تنها نقش آن ارسال cloudlets  به vms مناسب است.
 public class HdfsReplicationBroker extends HdfsDatacenterBroker {
 
     // used only to print prettier logsبرای چاپ زیباتر از داینامیک استفاده کردیم
@@ -30,7 +30,7 @@ public class HdfsReplicationBroker extends HdfsDatacenterBroker {
     public HdfsReplicationBroker(String name, int cloudletStartId) throws Exception {
         super(name, cloudletStartId);
     }
-
+   //برای مدیریت رویدادهای شبیه سازی مختلف بر اساس tag های آنها استفاده می کند.
     @Override
     public void processEvent(SimEvent ev) {
         switch (ev.getTag()) {
@@ -83,7 +83,8 @@ public class HdfsReplicationBroker extends HdfsDatacenterBroker {
                 break;
         }
     }
-
+       //پیاده سازی برای مدیریت رویدادهای اطلاعات datanode
+      //  نmapping های broker را بر اساس اطلاعات datanode دریافتی به روز می کند
     protected void processDataNodeInformation(SimEvent ev){
         int[] data = (int[]) ev.getData();
         int currentDataNodeId = data[0];
@@ -95,6 +96,9 @@ public class HdfsReplicationBroker extends HdfsDatacenterBroker {
         getVmsCreatedList().add(VmList.getById(getVmList(), currentDataNodeId));
     }
 
+
+     //این متد برای رسیدگی به ارسال cloudlet های گره داده Override می شود.
+     // از طریق فهرست cloudlet ها تکرار می شود و آنها را به VM های مناسب در Datacenter می فرستد.
     @Override
     protected void submitDNCloudlets() {
         int vmIndex = 0;

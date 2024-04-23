@@ -77,7 +77,7 @@ public class HarddriveStorage implements Storage {
 
 	/**
 	 * Creates a new hard drive storage with a given name and capacity.
-	 * 
+	 *
 	 * @param name the name of the new hard drive storage
 	 * @param capacity the capacity in MByte
 	 * @throws ParameterException when the name and the capacity are not valid
@@ -99,11 +99,12 @@ public class HarddriveStorage implements Storage {
 	/**
 	 * Creates a new hard drive storage with a given capacity. In this case the name of the storage
 	 * is a default name.
-	 * 
+	 *
 	 * @param capacity the capacity in MByte
 	 * @throws ParameterException when the capacity is not valid
 	 */
 	public HarddriveStorage(double capacity) throws ParameterException {
+//		super();
 		if (capacity <= 0) {
 			throw new ParameterException("HarddriveStorage(): Error - capacity <= 0.");
 		}
@@ -111,6 +112,27 @@ public class HarddriveStorage implements Storage {
 		this.capacity = capacity;
 		init();
 	}
+
+
+//	@Override
+//	public void processEvent(SimEvent ev) {
+//		switch (ev.getTag()) {
+//
+//			// درخواست ویژگی های منبع
+//			case CloudSimTags.HDFS_NAMENODE_ADD_DN:
+//				processAddDataNode(ev);
+//				break;
+//
+//		}
+//	}
+//	protected void processAddDataNode(SimEvent ev){
+//		{
+//
+//			int[] data = (int[]) ev.getData();
+//			int currentDataNodeId = data[0];
+//		}
+//
+//	}
 
 	/**
 	 * The initialization of the hard drive is done in this method. The most common parameters, such
@@ -133,6 +155,57 @@ public class HarddriveStorage implements Storage {
 	public double getAvailableSpace() {
 		return capacity - currentSize;
 	}
+
+	@Override
+	public double getUtilization() {
+		return currentSize / capacity * 100;
+	}
+
+	@Override
+	public double getAdditionalBits() {
+
+		if (this.getUtilization() >= 70 && this.getUtilization() <= 100) {
+			return getAvailableSpace() - 10000;
+
+		} else if (this.getUtilization() >= 40 && this.getUtilization() < 70) {
+			return getAvailableSpace() - 30000;
+
+		} else if (this.getUtilization() >= 10 && this.getUtilization() < 40) {
+			return getAvailableSpace()  - 50000;
+		}
+        return 0;
+    }
+
+
+//    private void applyLevelOne(int dataNode, int additionalBits) {
+//        if (dataNodeStorageMap.containsKey(dataNode)) {
+//            dataNodeStorageMap.get(dataNode).applyLevelOne(additionalBits);
+//            System.out.println("Level 1 applied to Data Node " + dataNode + ": " + additionalBits + " bits added");
+//        } else {
+//            System.out.println("Data Node " + dataNode + " information not available.");
+//        }
+//    }
+//
+//	private void applyLevelTwo(int dataNode, int additionalBits) {
+//		if (dataNodeStorageMap.containsKey(dataNode)) {
+//			dataNodeStorageMap.get(dataNode).applyLeveltwo(additionalBits);
+//			System.out.println("Level 2 applied to Data Node " + dataNode + ": " + additionalBits + " bits added");
+//		} else {
+//			System.out.println("Data Node " + dataNode + " information not available.");
+//		}
+//	}
+//
+//    private void applyLevelThree(int dataNode, int additionalBits) {
+//        if (dataNodeStorageMap.containsKey(dataNode)) {
+//            dataNodeStorageMap.get(dataNode).applyLevelThree(additionalBits);
+//            System.out.println("Level 3 applied to Data Node " + dataNode + ": " + additionalBits + " bits added");
+//        } else {
+//            System.out.println("Data Node " + dataNode + " information not available.");
+//        }
+//    }
+
+
+
 
 	@Override
 	public boolean isFull() {

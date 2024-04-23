@@ -17,8 +17,10 @@ import java.util.List;
 
 public class HdfsDatacenterBroker extends DatacenterBroker {
 
+   //برای پیگیری حداکثر شناسه اختصاص داده شده به یک cloudlet استفاده می شود.
     protected int currentCloudletMaxId;
 
+   //شناسه namenode
     protected int nameNodeId;
 
     protected HdfsCloudlet stagedCloudlet;

@@ -12,9 +12,10 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Represents a Virtual Machine (VM) that runs inside a Host, sharing a hostList with other VMs. It processes
- * cloudlets. This processing happens according to a policy, defined by the CloudletScheduler. Each
- * VM has a owner, which can submit cloudlets to the VM to execute them.
+ * یک ماشین مجازی (VM) را نشان می دهد که در داخل یک میزبان اجرا می شود و یک لیست میزبان را با ماشین های مجازی دیگر به اشتراک می گذارد.
+ * اcloudlet را پردازش می کند.
+ * این پردازش طبق خط مشی تعریف شده توسط CloudletScheduler انجام می شود.
+ * هر ماشین مجازی صاحبی دارد که می تواند کلودلت ها را به ماشین مجازی ارسال کند تا آنها را اجرا کند.
  * 
  * @author Rodrigo N. Calheiros
  * @author Anton Beloglazov

@@ -64,7 +64,6 @@ public class NameNode extends SimEntity {
      */
     public NameNode(String name, int defaultBlockSize, int defaultReplicas) {
         super(name);
-        // Initialize DataNodeStorage instances for each data node
 
         setClientList(new ArrayList<Integer>());
         setMapClientToBroker(new HashMap<Integer, Integer>());
@@ -76,7 +75,7 @@ public class NameNode extends SimEntity {
         setMapDataNodeToCapacity(new HashMap<Integer, Integer>());
         setMapDataNodeToUsage(new HashMap<Integer, Double>());
         setMapDataNodeToTotalCapacity(new HashMap<Integer, Double>());
-        initializeDataNodeStorage();
+//        initializeDataNodeStorage();
         setMapDataNodeToUsedSpace(new HashMap<Integer, Double>());
 
 
@@ -107,11 +106,6 @@ public class NameNode extends SimEntity {
             case CloudSimTags.HDFS_NAMENODE_WRITE_FILE:
                 processWriteFile(ev);
                 break;
-//                کدی که خودم اضافه کردم
-//            case CloudSimTags.HDFS_NAMENODE_RESOURCE_DN :
-//                processDynamicProcessing (ev) ;
-//                break;
-
             //اگر شبیه سازی به پایان برسد
             case CloudSimTags.END_OF_SIMULATION:
                 shutdownEntity();
@@ -173,12 +167,12 @@ public class NameNode extends SimEntity {
 
         // گDataNode را به حداکثر ظرفیتش نگاشت می کنیم
         this.mapDataNodeToCapacity.put(currentDataNodeId, currentStorageCapacity);
-        this.mapDataNodeToTotalCapacity.put(currentDataNodeId, (double) currentStorageCapacity);
+//        this.mapDataNodeToTotalCapacity.put(currentDataNodeId, (double) currentStorageCapacity);
 
         //درصد استفاده از DataNode فعلی را تنظیم می کنیم که 0٪ است.
         this.mapDataNodeToUsage.put(currentDataNodeId, 0.0);
-        this.mapDataNodeToUsedSpace.put(currentDataNodeId,0.0);
-        this.dataNodeStorageMap.put(currentDataNodeId,new DataNodeStorage());
+//        this.mapDataNodeToUsedSpace.put(currentDataNodeId,0.0);
+//        this.dataNodeStorageMap.put(currentDataNodeId,new DataNodeStorage());
 
         // اگر رک از قبل موجود نیست، استفاده از آن را روی 0% تنظیم می‌کنم، اما دیگر این کار را انجام نمی‌دهم،
         // زیرا بهmap دیگری نیز نیاز دارم که هر rack را به یک datacenter نگاشت کند،
@@ -211,10 +205,10 @@ public class NameNode extends SimEntity {
         List<Integer> acceptableDestinations = new ArrayList<Integer>();
 
         // DATANODE
-        // خالی است و اجازه ندارد پر باشد
-        // ما بلوک اول را با درصد پر کردن کمتر در DATANODE می نویسیم
-        // و نسخه های آن در رک های دیگر
-        //  با حذف تمام DataNode که قبلاً حاوی بلوک هستند شروع می کنیم
+//   دیتا نود نمی تواند حاوی بلاک باشد.
+// اولین بلوک در جایی نوشته میشود که کمترین درصد استفاده را دارد.(همه گره ها به یک اندازه با کلاینت فاصله دارند.)
+//   برای بلوک دوم تمام رک های دیگر را در نظر میگیریم.(رکی که کمترین درصد استفاده را دارد در اولویت است)
+//    در داخل این رک دو گره باید نوشته شوند.
 
             //بررسی کنید کدام DataNode برای ذخیره سازی بلوک مناسب است
         for (Integer iterDataNode : getDataNodeList()){
@@ -320,7 +314,7 @@ public class NameNode extends SimEntity {
                     previousNode = chosenNode;
                     destinationIds.add(chosenNode);
                     acceptableDestinations.remove(chosenNode);
-//تعداد ماکت های باقی مانده را به روز کنید
+                 //تعداد ماکت های باقی مانده را به روز کنید
                     replicasNumber--;
                     if (replicasNumber == 0){
                         break;
@@ -345,116 +339,116 @@ public class NameNode extends SimEntity {
         // سپسbroker آن را در destVm Cloudlet درج می کند (destVM باید دوباره به عنوان یک لیست پیاده سازی شود)
         sendNow(clientBrokerId, CloudSimTags.HDFS_NAMENODE_RETURN_DN_LIST, destinationIds);
 
-         for (Integer dataNode : mapDataNodeToTotalCapacity.keySet()) {
-            double totalCapacity = mapDataNodeToTotalCapacity.get(dataNode);
 
-            // ابتدا بررسی می کنیم کهdataNode درmapDataNodeToUsedSpace قرار دارد.
-            if (mapDataNodeToUsedSpace.containsKey(dataNode)) {
-                double usedSpace = mapDataNodeToUsedSpace.get(dataNode);
 
-                // سپس utiltzation را محاسبه میکنیم
-                double usageStatusPercentage = (usedSpace / totalCapacity) * 100;
 
-                usageStatusPercentage=30;
+//        // Retrieve the utilization percentage for the storage nodes
+//        double utilizationPercentage =getUtilization();
+//        utilizationPercentage = 70;
+//
+//        // Determine the appropriate block size adjustment based on the utilization percentage
+//        int blockSizeAdjustment = 0;
+//        if (utilizationPercentage >= 10 && utilizationPercentage < 40) {
+//            blockSizeAdjustment = 10000; // Add 10,000 MB of data
+//        } else if (utilizationPercentage >= 40 && utilizationPercentage < 70) {
+//            blockSizeAdjustment = 20000; // Add 20,000 MB of data
+//        } else if (utilizationPercentage >= 70 && utilizationPercentage <= 100) {
+//            blockSizeAdjustment = 50000; // Add 50,000 MB of data
+//        }
+//
+//      // Add the adjusted block size to the block being written
+//        blockSize += blockSizeAdjustment;
 
-                // لول ها را بر اساس درصد utilization اعمال میکنیم
-                if (usageStatusPercentage >= 70 && usageStatusPercentage <= 100) {
-                    // در لول اول 100 بیت دیتا به دیتای اصلی اضافه میکنیم
-                    applyLevelOne(dataNode, 100);
-                } else if (usageStatusPercentage >= 40 && usageStatusPercentage < 70) {
-                    // در لول دوم 200 بیت دیتا به دیتای اصلی اضافه میکنیم
-                    applyLevelTwo(dataNode, 200);
-                } else if (usageStatusPercentage >= 10 && usageStatusPercentage < 40) {
-                    // در لول سوم 400 بیت دیتا به دیتای اصلی اضافه میکنیم
-                    applyLevelThree(dataNode, 400);
-                }
 
-                // Print or use the usage status percentage as needed
-                System.out.println("Data Node " + dataNode + " Usage Status: " + usageStatusPercentage + "%");
-            } else {
-                System.out.println("Data Node " + dataNode + " information not available.");
-            }
-        }
+
+
+//
+//         for (Integer dataNode : mapDataNodeToTotalCapacity.keySet())
+//            double totalCapacity = mapDataNodeToTotalCapacity.get(dataNode);
+//
+//            // ابتدا بررسی می کنیم کهdataNode درmapDataNodeToUsedSpace قرار دارد.
+//            if (mapDataNodeToUsedSpace.containsKey(dataNode)) {
+//                double usedSpace = mapDataNodeToUsedSpace.get(dataNode);
+//
+//                // سپس utiltzation را محاسبه میکنیم
+//                double usageStatusPercentage = (usedSpace / totalCapacity) * 100;
+//
+////                usageStatusPercentage=30;
+//        if (this.getUtilization() >= 70 && this.getUtilization() <= 100) {
+////			return getAvailableSpace() - 10000;
+//////                     در لول اول 100 بیت دیتا به دیتای اصلی اضافه میکنیم
+//                    applyLevelOne(this.hostId, 10000);
+//		} else if (this.getUtilization() >= 40 && this.getUtilization() < 70) {
+////			return getAvailableSpace() - 30000;
+////			// در لول سوم 400 بیت دیتا به دیتای اصلی اضافه میکنیم
+//                    applyLevelTwo(this.hostId, 30000);
+//		} else if (this.getUtilization() >= 10 && this.getUtilization() < 40) {
+////			return getAvailableSpace()  - 50000;
+//            applyLevelThree(this.hostId, 50000);
+//		}
+////        return 0;
+////    }
+//
+//                // لول ها را بر اساس درصد utilization اعمال میکنیم
+//                if (usageStatusPercentage >= 20 && usageStatusPercentage <= 30) {
+//                    // در لول اول 100 بیت دیتا به دیتای اصلی اضافه میکنیم
+//                    applyLevelOne(dataNode, 100);
+//                } else if (usageStatusPercentage >= 10 && usageStatusPercentage < 20) {
+//                    // در لول دوم 200 بیت دیتا به دیتای اصلی اضافه میکنیم
+//                    applyLevelTwo(dataNode, 200);
+//                } else if (usageStatusPercentage >= 0 && usageStatusPercentage < 10) {
+//                    // در لول سوم 400 بیت دیتا به دیتای اصلی اضافه میکنیم
+//                    applyLevelThree(dataNode, 400);
+//                }
+//
+//                // Print or use the usage status percentage as needed
+//                System.out.println("Data Node " + dataNode + " Usage Status: " + usageStatusPercentage + "%");
+//            } else {
+//                System.out.println("Data Node " + dataNode + " information not available.");
+//            }
+//        }
     }
+
+
 
     // نmap برای ذخیره نمونه های DataNodeStorage مرتبط با هر datanode
-    private Map<Integer, DataNodeStorage> dataNodeStorageMap = new HashMap<>();
+//    private final Map<Integer, DataNodeStorage> dataNodeStorageMap = new HashMap<>();
 
     // متدی برای مقداردهی اولیه نمونه های DataNodeStorage برای هر datanode
-    private void initializeDataNodeStorage() {
-        for (Integer dataNode : mapDataNodeToTotalCapacity.keySet()) {
-            dataNodeStorageMap.put(dataNode, new DataNodeStorage());
-        }
-    }
-
-//    // متد هایی را برای اعمال بیت های اضافی بر اساس لول ها پیاده سازی می کنیم.
-    private void applyLevelOne(int dataNode, int additionalBits) {
-        if (dataNodeStorageMap.containsKey(dataNode)) {
-            dataNodeStorageMap.get(dataNode).applyLevelOne(additionalBits);
-            System.out.println("Level 1 applied to Data Node " + dataNode + ": " + additionalBits + " bits added");
-        } else {
-            System.out.println("Data Node " + dataNode + " information not available.");
-        }
-    }
-
-    private void applyLevelTwo(int dataNode, int additionalBits) {
-        if (dataNodeStorageMap.containsKey(dataNode)) {
-            dataNodeStorageMap.get(dataNode).applyLevelTwo(additionalBits);
-            System.out.println("Level 2 applied to Data Node " + dataNode + ": " + additionalBits + " bits added");
-        } else {
-            System.out.println("Data Node " + dataNode + " information not available.");
-        }
-    }
-
-    private void applyLevelThree(int dataNode, int additionalBits) {
-        if (dataNodeStorageMap.containsKey(dataNode)) {
-            dataNodeStorageMap.get(dataNode).applyLevelThree(additionalBits);
-            System.out.println("Level 3 applied to Data Node " + dataNode + ": " + additionalBits + " bits added");
-        } else {
-            System.out.println("Data Node " + dataNode + " information not available.");
-        }
-    }
-
-
-
-
-//    private void applyLevelOne(int dataNode) {
-//        // Assuming dataNodeStorageMap is a Map<Integer, DataNodeStorage> to store instances for each data node
-//
-//        // Check if the DataNodeStorage instance exists for the given data node
-//        if (!dataNodeStorageMap.containsKey(dataNode)) {
-//            // If not, create a new instance and put it in the map
+//    private void initializeDataNodeStorage() {
+//        for (Integer dataNode : mapDataNodeToTotalCapacity.keySet()) {
 //            dataNodeStorageMap.put(dataNode, new DataNodeStorage());
 //        }
+//    }
 //
-//        // Use the applyLevelOne method of DataNodeStorage
-//        dataNodeStorageMap.get(dataNode).applyLevelOne(dataNode);
+////    // متد هایی را برای اعمال بیت های اضافی بر اساس لول ها پیاده سازی می کنیم.
+//    private void applyLevelOne(int dataNode, int additionalBits) {
+//        if (dataNodeStorageMap.containsKey(dataNode)) {
+//            dataNodeStorageMap.get(dataNode).applyLevelOne(additionalBits);
+//            System.out.println("Level 1 applied to Data Node " + dataNode + ": " + additionalBits + " bits added");
+//        } else {
+//            System.out.println("Data Node " + dataNode + " information not available.");
+//        }
+//    }
+//
+//    private void applyLevelTwo(int dataNode, int additionalBits) {
+//        if (dataNodeStorageMap.containsKey(dataNode)) {
+//        }            dataNodeStorageMap.get(dataNode).applyLevelTwo(additionalBits);
+//            System.out.println("Level 2 applied to Data Node " + dataNode + ": " + additionalBits + " bits added");
+//        } else {
+//            System.out.println("Data Node " + dataNode + " information not available.");
+//        }
+//    }
+//
+//    private void applyLevelThree(int dataNode, int additionalBits) {
+//        if (dataNodeStorageMap.containsKey(dataNode)) {
+//            dataNodeStorageMap.get(dataNode).applyLevelThree(additionalBits);
+//            System.out.println("Level 3 applied to Data Node " + dataNode + ": " + additionalBits + " bits added");
+//        } else {
+//            System.out.println("Data Node " + dataNode + " information not available.");
+//        }
 //    }
 
-//    private void applyLevelTwo(int dataNode) {
-//        // Assuming dataNodeStorageMap is a Map<Integer, DataNodeStorage> to store instances for each data node
-//
-//        // Check if the DataNodeStorage instance exists for the given data node
-//        if (!dataNodeStorageMap.containsKey(dataNode)) {
-//            // If not, create a new instance and put it in the map
-//            dataNodeStorageMap.put(dataNode, new DataNodeStorage());
-//        }
-//
-//        // Use the applyLevelOne method of DataNodeStorage
-//        dataNodeStorageMap.get(dataNode).applyLevelTwo(dataNode);
-//    }
-//    private void applyLevelThree(int dataNode) {
-//        // Assuming dataNodeStorageMap is a Map<Integer, DataNodeStorage> to store instances for each data node
-//
-//        // Check if the DataNodeStorage instance exists for the given data node
-//        if (!dataNodeStorageMap.containsKey(dataNode)) {
-//            // If not, create a new instance and put it in the map
-//            dataNodeStorageMap.put(dataNode, new DataNodeStorage());
-//        }
-//
-//        // Use the applyLevelOne method of DataNodeStorage
-//        dataNodeStorageMap.get(dataNode).applyLevelThree(dataNode);
-//    }
 
 
     protected double findRackOverallUsage(Integer rackId){

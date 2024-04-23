@@ -14,20 +14,19 @@ public class HdfsCloudlet extends Cloudlet {
     // نوع HDFS: یا Client یا Data Node، به طور پیش فرض Data Node خواهد بود
     protected int hdfsType;
 
-    // وid vm اصلی
+    // این متغیر, شناسه vm اصلی مرتبط با این cloudlet را در خود جای داده است
     protected int sourceVmId;
 
-    // وid Data Node VM که در آن datablock نوشته خواهد شد
+    //این لیست شامل vmهای مقصد است که datablock در آنجا نوشته می شود.
     protected List<Integer> destVmIds;
 
     // فایل مورد نیاز (Cloudlet فهرستی از فایل های مورد نیاز دارد، اما برای این مدل فقط به یک فایل نیاز داریم)
     protected File requiredFile;
 
-    // ما به این نیاز داریم تا اطلاعات لازم برای شبیه‌سازی نوشتن در DN را داشته باشیم
-    //، نمی‌توانیم به سادگی آن را با نام مانند Client جستجو کنیم، زیرا فایل از قبل در پایگاه داده وجود ندارد.
+    //این متغیر اندازه datablock ای که باید نوشته شود را نگه می دارد.
     protected int blockSize;
 
-    // تعداد کپی های مورد نظر برای فایل این Cloudlet
+    // این متغیر تعداد کپی های مورد نظر برای فایل مرتبط با این cloudlet را نگه می دارد
     protected int replicaNum;
 
     /*
@@ -57,10 +56,8 @@ public class HdfsCloudlet extends Cloudlet {
         this.hdfsType = HDFS_DN;
     }
 
-    //این روش کلودلت داده شده را به یک کلود جدید شبیه سازی می کند
-    // ، با id داده شده جدید این امر ضروری است زیرا شناسه یک کلودلت یک بینش نهایی است
-
-    // یادداشت‌ها: هنوز مطمئن نیستم که همه فیلدها را کپی کرده‌ام یا خیر، ممکن است برخی از آنها هنوز مفقود باشند
+    //به طور کلی، این روش یک کلون از شی اصلی HdfsCloudlet با یک شناسه جدید ایجاد می کند
+    // و ویژگی های دیگری مانند utilization models، شناسه کاربر و شناسه های VM مقصد را تنظیم می کند
     public static HdfsCloudlet cloneCloudletAssignNewId(HdfsCloudlet cl, int newId){
 
         long cloudletLength = cl.getCloudletLength();
@@ -107,8 +104,8 @@ public class HdfsCloudlet extends Cloudlet {
     public void setSourceVmId(int sourceVmId) {
         this.sourceVmId = sourceVmId;
     }
-//    این متد یک تنظیم کننده برای ویژگی sourceVmId است.
-//    یک پارامتر عدد صحیح (sourceVmId) می گیرد و مقدار ویژگی sourceVmId را به مقدار ارائه شده تنظیم می کند.
+//    از این متد ها برای دریافت و تنظیم ویژگی sourceVmId استفاده می شود
+//    که نشان دهنده شناسه vm اصلی مرتبط با cloudlet است.
 
     public List<Integer> getDestVmIds() {
         return destVmIds;

@@ -10,6 +10,7 @@ import java.util.List;
 
 public class HdfsDatacenter extends Datacenter {
 
+//    یک شمارنده برای تولید نام فایل های منحصر به فرد در datacenter را نشان می دهد.
     private int fileNameCounter;
 
     // وHDFS_CLIENT یا HDFS_DN که نقش vms داخل این Datacenter خواهد بود.
@@ -18,7 +19,7 @@ public class HdfsDatacenter extends Datacenter {
     // وreplicationBroker برای Datacenter
     protected int replicationBrokerId;
 
-    // ایجاد یک متغیر جدید با همان نام super، تا از طریق یک گیرنده قابل دسترسی باشد
+    // ایجاد یک متغیر جدید با همان نام super، تا از طریق یک getter قابل دسترسی باشد
     private List<Storage> storageList;
 
     /**
@@ -49,6 +50,8 @@ public class HdfsDatacenter extends Datacenter {
      * @pre resource != null
      * @post $none
      */
+
+//    سconstructor برای ایجاد یکdatacenter  برای clientها.
     public HdfsDatacenter(String name, DatacenterCharacteristics characteristics, VmAllocationPolicy vmAllocationPolicy,
                           List<Storage> storageList, double schedulingInterval) throws Exception {
         super(name, characteristics, vmAllocationPolicy, storageList, schedulingInterval);
@@ -56,8 +59,8 @@ public class HdfsDatacenter extends Datacenter {
         fileNameCounter = 0;
         setHdfsType(CloudSimTags.HDFS_CLIENT);
     }
-
-    //سازنده برای Datacenter گره های داده، باید replicationBrokerId را بداند
+     // بconstructorبرای ایجاد یکdatacenter  برای datanodeها.
+    //سconstructor برای Datacenter گره های داده، باید replicationBrokerId را بداند
     public HdfsDatacenter(String name, int replicationBrokerId, DatacenterCharacteristics characteristics, VmAllocationPolicy vmAllocationPolicy,
                           List<Storage> storageList, double schedulingInterval) throws Exception {
         super(name, characteristics, vmAllocationPolicy, storageList, schedulingInterval);
@@ -67,9 +70,8 @@ public class HdfsDatacenter extends Datacenter {
         setHdfsType(CloudSimTags.HDFS_DN);
 
     }
-
+    // این متد addFiles لیستی از فایل ها را به فضای ذخیره سازی دیتاسنتر اضافه می کند.
     // فایل های موجود در لیست را به عنوان یک سری فایل جداگانه اضافه می کند
-    // همان چک هایی که در addFile وجود دارد وجود ندارد، اجرای مجدد آنها دشوار است، نمی دانم...
     public void addFiles(List<File> fileList){
 
         for (File file : fileList) {

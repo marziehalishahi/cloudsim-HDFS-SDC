@@ -44,6 +44,7 @@ public interface Storage {
 	 */
 	double getCurrentSize();
 
+
 	/**
 	 * Gets the maximum transfer rate of the storage in MByte/sec.
 	 * 
@@ -57,6 +58,11 @@ public interface Storage {
 	 * @return the available space in MB
 	 */
 	double getAvailableSpace();
+
+	double getUtilization();
+
+	double getAdditionalBits();
+
 
 	/**
 	 * Sets the maximum transfer rate of this storage system in MByte/sec.

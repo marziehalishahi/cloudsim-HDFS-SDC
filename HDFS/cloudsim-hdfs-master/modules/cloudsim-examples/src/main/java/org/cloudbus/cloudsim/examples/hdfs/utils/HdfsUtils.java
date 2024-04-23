@@ -1,10 +1,8 @@
 package org.cloudbus.cloudsim.examples.hdfs.utils;
 
 import org.cloudbus.cloudsim.*;
-import org.cloudbus.cloudsim.hdfs.HdfsCloudlet;
-import org.cloudbus.cloudsim.hdfs.HdfsDatacenter;
-import org.cloudbus.cloudsim.hdfs.HdfsHost;
-import org.cloudbus.cloudsim.hdfs.HdfsVm;
+import org.cloudbus.cloudsim.core.SimEntity;
+import org.cloudbus.cloudsim.hdfs.*;
 import org.cloudbus.cloudsim.provisioners.BwProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.PeProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.RamProvisionerSimple;
@@ -14,20 +12,20 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public final class HdfsUtils {
+public final class HdfsUtils{
 
-    // crea una lista di Vms da submittare al broker
+    // لیستی از VMS را برای ارسال به broker ایجاد می کند
     // NOTE: vmm is always "Xen"
     public static List<HdfsVm> createVmList(int count, int userId, int mips, int pesNumber, int ram, long bw, long size,
                                             String vmm, String cloudletSchedulerType){
 
         LinkedList<HdfsVm> list = new LinkedList<HdfsVm>();
 
-        // array di VMs
+        // array of VMs
         HdfsVm[] vm = new HdfsVm[count];
 
-        // funziona così: vm è un array di dimensione "vms", nel ciclo riempiamo questo array di tante nuove vm,
-        // ognuna di queste vm è anche aggiunta alla lista "list", che è ritornata alla fine, fuori dal ciclo
+        // به این صورت عمل می کند: vm آرایه ای با اندازه "vms" است، در حلقه، این آرایه را با تعداد زیادی vm جدید پر می کنیم،
+        // هر یک از این vm نیز به لیست "list" اضافه می شود، که در انتها، خارج از فهرست بازگردانده می شود.
         for(int i = 0; i < count; i++){
 
             CloudletScheduler cloudletScheduler =
@@ -35,7 +33,7 @@ public final class HdfsUtils {
 
             vm[i] = new HdfsVm(i, userId, mips, pesNumber, ram, bw, size, vmm, cloudletScheduler);
 
-            //to create a VM with a space shared scheduling policy for cloudlets:
+            //برای ایجاد یک VM با سیاست space shared مشترک برای کلودلت‌ها:
             //vm[i] = Vm(i, userId, mips, pesNumber, ram, bw, size, priority, vmm, new CloudletSchedulerSpaceShared());
 
             list.add(vm[i]);
@@ -44,7 +42,7 @@ public final class HdfsUtils {
         return list;
     }
 
-    // crea una lista di Cloudlets da submittare al broker
+    // فهرستی از Cloudlet ها را برای ارسال به broker ایجاد کنید.
     public static List<HdfsCloudlet> createCloudletList(int userId, int count, long length, long fileSize, long outputSize,
                                                         int pesNumber, UtilizationModel utilizationModel, List<String> blockList, int blockSize){
 
@@ -63,7 +61,7 @@ public final class HdfsUtils {
         return list;
     }
 
-    // crea la lista di PEs per ciascun singolo Host
+    // لیستی از PE ها را برای هر میزبان جداگانه ایجاد می کند
     // TODO: for now it only uses PeProvisionerSimple (ma è l'unico che esiste in Cloudsim in ogni caso)
     public static List<Pe> createPeList(int num, int mips){
 
@@ -110,8 +108,8 @@ public final class HdfsUtils {
         return blockList;
     }
 
-    // questa linked list sarà poi la linked list di storage in DatacenterCharacteristics
-    // per ogni host creo un hard drive
+    // این linked list سپس linked list ذخیره سازی در DatacenterCharacteristics خواهد بود
+    //  برای هرhost یک هارد دیسک ایجاد می کنم
     public static LinkedList<Storage> createStorageList(List<HdfsHost> hostList, int storageSize) throws ParameterException {
 
         LinkedList<Storage> storageList = new LinkedList<Storage>();
@@ -126,12 +124,11 @@ public final class HdfsUtils {
         return storageList;
     }
 
-    // crea la lista di Hosts in un Datacenter
+    // لیستی از host ها را در datacenter ایجاد می کند
     // TODO: Per ora il Vm scheduler è solo Time Shared e gli altri provisioners sono solo le versioni "Simple"
     public static List<HdfsHost> createHostList(int num, int hostsPerRack, int baseRackId, int ram, int storageSize, int bw, int pesNum, int mips){
 
-        // if it works as intended, ogni singolo host deve crearsi la propria istanza di una PeList
-
+        //  هر host جداگانه باید نمونه PeList خود را ایجاد کند
         List<HdfsHost> hostList = new ArrayList<HdfsHost>();
 
         for (int i = 0; i < num; i++){
@@ -206,7 +203,6 @@ public final class HdfsUtils {
         String indent = "    ";
         Log.printLine();
         Log.printLine("========== STORAGE STATUS ==========");
-
         for (HdfsDatacenter datacenter : list){
             Log.printLine("Datacenter ID: " + (datacenter.getId()-1));
 
@@ -215,7 +211,7 @@ public final class HdfsUtils {
                 HdfsHost tempHost = (HdfsHost) datacenter.getHostList().get(tempDrive.getHostId());
                 //Log.printLine("Rack ID : " + tempHost.getRackId());
                 Log.printLine(indent + "Rack ID : " + tempHost.getRackId() + ", Drive: " + drive.getName() + ", Maximum capacity: " + drive.getCapacity() +
-                        " MB, Used space: " + drive.getCurrentSize() + " MB, Free Space: " + drive.getAvailableSpace() + " MB" + ", File list:");
+                        " MB, Used space: " + drive.getCurrentSize() + " MB, Free Space: " + drive.getAvailableSpace() + " MB, utilization: " + drive.getUtilization() +"%" + ", additionalBits: "  + drive.getAdditionalBits() + " MB " + ", File list:" );
                 //Log.printLine(indent + indent + "File list: (Number of stored files: " + drive.getNumStoredFile() + ")");
 
                 for (String fileName : drive.getFileNameList()){

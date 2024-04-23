@@ -16,10 +16,10 @@ import org.cloudbus.cloudsim.provisioners.BwProvisioner;
 import org.cloudbus.cloudsim.provisioners.RamProvisioner;
 
 /**
- * A Host is a Physical Machine (PM) inside a Datacenter. It is also called as a Server.
- * It executes actions related to management of virtual machines (e.g., creation and destruction).
- * A host has a defined policy for provisioning memory and bw, as well as an allocation policy for
- * Pe's to virtual machines. A host is associated to a datacenter. It can host virtual machines.
+ * میزبان یک ماشین فیزیکی (PM) در داخل یک مرکز داده است. به عنوان سرور نیز نامیده می شود.
+ *   * اقدامات مربوط به مدیریت ماشین های مجازی (مانند ایجاد و تخریب) را اجرا می کند.
+ *   * یک هاست یک سیاست تعریف شده برای تامین حافظه و bw و همچنین یک خط مشی تخصیص Pe's به ماشین های مجازی دارد.
+ *   یک میزبان با یک مرکز داده مرتبط است. می تواند میزبان ماشین های مجازی باشد.
  * 
  * @author Rodrigo N. Calheiros
  * @author Anton Beloglazov

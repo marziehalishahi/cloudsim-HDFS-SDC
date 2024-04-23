@@ -11,9 +11,9 @@ package org.cloudbus.cloudsim.core;
 import org.cloudbus.cloudsim.Datacenter;
 
 /**
- * Contains various static command tags that indicate a type of action that needs to be undertaken
- * by CloudSim entities when they receive or send events. <b>NOTE:</b> To avoid conflicts with other
- * tags, CloudSim reserves negative numbers, 0 - 299, and 9600.
+ *
+ * حاوی تگ های مختلف فرمان ایستا است که نشان دهنده نوع عملی است که باید توسط موجودیت های CloudSim هنگام دریافت یا ارسال رویدادها انجام شود.
+ * <b>توجه:</b> برای جلوگیری از درگیری با سایر برچسب‌ها، CloudSim اعداد منفی 0 - 299 و 9600 را رزرو می‌کند.
  * 
  * @todo There aren't negative reserved tags, but only positive tags (with 2 exceptions).
  * 

@@ -11,13 +11,9 @@ package org.cloudbus.cloudsim.examples.hdfs;
 
 import org.cloudbus.cloudsim.*;
 import org.cloudbus.cloudsim.core.CloudSim;
-import org.cloudbus.cloudsim.core.CloudSimTags;
 import org.cloudbus.cloudsim.hdfs.*;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 import static org.cloudbus.cloudsim.core.CloudSimTags.HDFS_CLIENT;
 import static org.cloudbus.cloudsim.core.CloudSimTags.HDFS_DN;
@@ -56,35 +52,35 @@ public class HdfsExample0 {
 
 			// values for PEs
 			int datacenterPeMips = 1000;		// mips (performance) of a single PE
-			int datacenterPeCount = 1;			// number of PEs per Host
+			int datacenterPeCount = 1;			// تعداد PE در هر host
 
 			// values for Hosts
-			int datacenterHostCount = 9;		// number of Hosts (in totale nel Datacenter)
-			int datacenterHostRam = 2048;		// amount of RAM for each Host
-			int datacenterHostStorage = 100000;	// amount of Storage assigned to each Host
-			int datacenterHostBw = 10000;		// amount of Bandwidth assigned to each Host
+			int datacenterHostCount = 9;		// تعداد hostها (در مجموع در datacenter)
+			int datacenterHostRam = 2048;		// مقدار رم برای هر host
+			int datacenterHostStorage = 100000;	// مقدار storage اختصاص داده شده به هر host
+			int datacenterHostBw = 10000;		// مقدار پهنای باند اختصاص داده شده به هر host
 
 			// values for Storage
-			int datacenterDiskCount = 9;		// number of Hard Drives in the Datacenter (non è più usato)
-			int datacenterDiskSize = 100000;	// capacity of each Hard Drive
+			int datacenterDiskCount = 9;		// تعداد Hard Drives در datacenter
+			int datacenterDiskSize = 100000;	//  بcapacity برای هر Hard Drive
 
 			// values for Racks
-			int datacenterHostsPerRack = 3;		// amount of Hosts in each Rack of the Datacenter
+			int datacenterHostsPerRack = 3;		// تعداد host ها در هر Rack از Datacenter
 			int datacenterBaseRackId = 0;
 
-			// create an array with all parameters stored inside
+			// ایجاد یک آرایه با تمام پارامترهای ذخیره شده
 			int[] datacenterParameters = new int[]{datacenterPeMips, datacenterPeCount, datacenterHostCount, datacenterHostRam,
 					datacenterHostStorage, datacenterHostBw, datacenterDiskCount, datacenterDiskSize, datacenterHostsPerRack, datacenterBaseRackId};
 
 			int[] datacenterParametersClient = new int[]{datacenterPeMips, datacenterPeCount, datacenterHostCount-8, datacenterHostRam,
 					datacenterHostStorage, datacenterHostBw, datacenterDiskCount-8, datacenterDiskSize, datacenterHostsPerRack, datacenterBaseRackId};
 
-			// metto i Datacenters in una list per convenience, in particolare per il metodo printStorageList
+			// برای راحتی Datacenters را در یک لیست قرار دادیم، (به خصوص برای متد printStorageList)
 			datacenterList =  new ArrayList<HdfsDatacenter>();
 
 			// Client datacenter
 			HdfsDatacenter datacenter0 = createDatacenter("Datacenter_0", datacenterParametersClient);
-			// Data Nodes datacenter (the starting Cloudlet ID needs to be different)
+			// Data Nodes datacenter (شناسه کلودلت شروع باید متفاوت باشد)
 			HdfsDatacenter datacenter1 = createDatacenterDataNodes("Datacenter_1", 0, datacenterParameters);
 
 
@@ -94,7 +90,7 @@ public class HdfsExample0 {
 			HdfsDatacenterBroker broker = createBroker();
 			int brokerId = broker.getId();
 
-			// one REPLICATION BROKER for each datacenter for data nodes (ognuno con un nuovo cloudlet base id)
+			// یک REPLICATION BROKER برای هر datacenter برای datanode (هر کدام با یک شناسه پایه cloudlet جدید)
 			HdfsReplicationBroker replicationBroker = createBroker(100);
 			datacenter1.setReplicationBrokerId(replicationBroker.getId());
 			broker.getReplicationBrokersId().add(replicationBroker.getId());
@@ -103,36 +99,47 @@ public class HdfsExample0 {
 			int blockSize = 10000;
 			int defaultReplicas = 3;
 			NameNode nameNode = new NameNode("NameNode1", blockSize, defaultReplicas);
+//			Map<Integer, Double> Space = new HashMap<>();
+//			Space.put(1,80000.0);
+//			Space.put(2,10000.0);
+//			Space.put(3,50000.5);
+//			Space.put(4,50000.6);
+//			Space.put(5,7770.3);
+//			Space.put(6,9999.0);
+//			Space.put(8,50000.7);
+//			Space.put(7,22200.6);
+//			Space.put(9,5000.3);
+//			nameNode.setMapDataNodeToUsedSpace(Space);
 
 			broker.setNameNodeId(nameNode.getId());
 
 			// Fourth step: Create VMs
 
 			// VM PARAMETERS
-			int vmCount = 10;		// number of vms to be created
-			int vmMips = 250;		// mips performance of a VM
-			int vmPesNumber = 1;	// number of PEs
+			int vmCount = 10;		// تعداد vms ایجاد شده
+			int vmMips = 250;		// عperformance یک vm
+			int vmPesNumber = 1;	// تعداد PEs
 			int vmRam = 2048;		// vm memory (MB)
-			long vmBw = 1000;		// available bandwidth for a VM
+			long vmBw = 1000;		// مbandwidthموجود برای یک VM
 			long vmSize = 10000;	// image size (MB)
 			String vmm = "Xen";		// name of the Vm manager
 			String cloudletSchedulerType = "Time"; // either "Time" shared or "Space" shared
 
-			// NOTE: this will create all identical vms, to create VMs with different parameters, run this method multiple times
+            // ایجاد vm
 			vmList = createVmList(vmCount, brokerId, vmMips, vmPesNumber, vmRam, vmBw, vmSize, vmm, cloudletSchedulerType);
 
-			// TODO: integrare questa parte nel metodo createVmList
+			// این قسمت  متد createVm List را ادغام میکند.
 			vmList.get(0).setHdfsType(HDFS_CLIENT);
 			for (int i = 1; i < vmList.size(); i++)
 				vmList.get(i).setHdfsType(HDFS_DN);
 
-			//submit vm list to the broker
+			// لیست vm را به broker ارسال میکند.
 			broker.submitVmList(vmList);
 
-			// submit the Data nodes vms to the replication broker
+			// مData nodes vms را به replication broker ارسال میکند
 			List<HdfsVm> dnList = new ArrayList<HdfsVm>();
 
-			// only the Data Nodes Vms will be added to the list that is submitted to the replication broker
+			// فقط Data Nodes Vms به لیستی که به replication broker ارسال می شود، اضافه می شود
 			for (HdfsVm iterVm : vmList)
 				if (iterVm.getHdfsType() == HDFS_DN)
 					dnList.add(iterVm);
@@ -152,17 +159,17 @@ public class HdfsExample0 {
 			int pesNumber = 1;
 			UtilizationModel utilizationModel = new UtilizationModelFull();
 
-			// I'll make two blocks to transfer from vm1 to vm2 and from vm1 to vm3
+			//  دو بلوک برای انتقال از vm1 به vm2 و از vm1 به vm3 می سازیم
 
 			// HDFS BLOCKS PARAMETERS
-			int blockCount = 3;		// block count deve sempre corrispondere al numero di cloudlets!
+			int blockCount = 3;		// تعداد بلوک‌هایی که در cloudletها نوشته شده است
 
 			List<File> blockList = createBlockList(blockCount, blockSize);
 
-			// We have to store the files inside the drives of Datacenter 0 first, because the client will read them from there
-			datacenter0.addFiles(blockList);	// adds the files in the list as a series of separate files
+			// ابتدا باید فایل ها را داخل درایورهای Datacenter 0 ذخیره کنیم، زیرا client آنها را از آنجا می خواند
+			datacenter0.addFiles(blockList);	// فایل های موجود در لیست را به عنوان یک سری فایل جداگانه اضافه میکنیم
 
-			// We have to make a list of strings for the "requiredFiles" field inside the HdfsCloudlet constructor
+			// ما باید لیستی از رشته ها را برای فیلد "requiredFiles" در سازنده HdfsCloudlet ایجاد کنیم.
 			List<String> blockList1 = new ArrayList<String>();
 			blockList1.add(blockList.get(0).getName());
 
@@ -172,7 +179,7 @@ public class HdfsExample0 {
 			List<String> blockList3 = new ArrayList<String>();
 			blockList3.add(blockList.get(2).getName());
 
-			// Finally we can create the cloudlets
+			// در نهایت می توانیم cloudlet ها را ایجاد کنیم
 			HdfsCloudlet cloudlet1 = new HdfsCloudlet(id, length, pesNumber, fileSize, outputSize, utilizationModel,
 					utilizationModel, utilizationModel, blockList1, blockSize);
 			cloudlet1.setUserId(brokerId);
@@ -187,22 +194,21 @@ public class HdfsExample0 {
 					utilizationModel, utilizationModel, blockList3, blockSize);
 			cloudlet3.setUserId(brokerId);
 
-			// set the destination vm id for the cloudlets
-			// queste saranno le VM di destinazione in cui vanno scritti i blocchi HDFS
+			// شناسه vm مقصد را برای cloudlet ها تنظیم کنید
+			//// اینها vms هستند که بلوک های HDFS باید در آن نوشته شوند
 			// TODO: ovviamente questo ora non dovrebbe più servire, se la vede il NameNode
 			//cloudlet1.setDestVmIds(vmList.get(1).getId());	// vm #2
 			//cloudlet2.setDestVmIds(vmList.get(2).getId());	// vm #3
 
-			// add the cloudlets to the list
+			// هcloudletها را به لیست اضافه کنید
 			cloudletList.add(cloudlet1);
 			cloudletList.add(cloudlet2);
 			cloudletList.add(cloudlet3);
 
-			// submit cloudlet list to the broker
+			// لیست cloudlet را به broker ارسال میکنیم
 			broker.submitCloudletList(cloudletList);
 
-			// bind the cloudlets to the vms, in questo caso entrambi vanno eseguiti sulla vm1
-			// che è la vm del Client che legge i files
+			// کcloudlet ها را به vms متصل میکنیم، در این مورد هر دو باید روی vm1 اجرا شوند که Client vm است که فایل ها را می خواند.
 			broker.bindCloudletToVm(cloudlet1.getCloudletId(),vmList.get(0).getId());
 			broker.bindCloudletToVm(cloudlet2.getCloudletId(),vmList.get(0).getId());
 
@@ -276,14 +282,14 @@ public class HdfsExample0 {
 		int hostBw = requiredValues[5];
 
 		// values for Storage
-		int hddNumber = requiredValues[6]; 	// non serve più perchè faccio un singolo hdd per host
+		int hddNumber = requiredValues[6]; 	//
 		int hddSize = requiredValues[7];
 
 		int hostsPerRack = requiredValues[8];
 		int baseRackId = requiredValues[9];
 
-		// questo metodo, se tutto va bene, mi deve ritornare una lista di Hosts, con Id crescente, ognuno
-		// con la propria Pe list (ognuno deve avere una istanza diversa di Pe List)
+		// این متد، باید لیستی از Host ها، با افزایش ID، هر کدام با لیست Pe خاص خود را برگرداند
+		// (هر کدام باید یک نمونه متفاوت از Pe List داشته باشند)
 		List<HdfsHost> hostList = createHostList(hostNum, hostsPerRack, baseRackId, hostRam, hostStorageSize, hostBw, pesNum, mips);
 
 		// DatacenterCharacteristics
@@ -301,7 +307,7 @@ public class HdfsExample0 {
 		DatacenterCharacteristics characteristics = new DatacenterCharacteristics(
 				arch, os, vmm, hostList, time_zone, cost, costPerMem, costPerStorage, costPerBw);
 
-		// create and return the Datacenter object
+		// شی Datacenter را ایجاد و return میکنیم
 		HdfsDatacenter datacenter = null;
 		try {
 			datacenter = new HdfsDatacenter(name, characteristics, new VmAllocationPolicySimple(hostList), storageList, 0);
@@ -331,14 +337,14 @@ public class HdfsExample0 {
 		int hostBw = requiredValues[5];
 
 		// values for Storage
-		int hddNumber = requiredValues[6];	// non lo uso più perchè metto un hard drive per host
+		int hddNumber = requiredValues[6];	//
 		int hddSize = requiredValues[7];
 
 		int hostsPerRack = requiredValues[8];
 		int baseRackId = requiredValues[9];
 
-		// questo metodo, se tutto va bene, mi deve ritornare una lista di Hosts, con Id crescente, ognuno
-		// con la propria Pe list (ognuno deve avere una istanza diversa di Pe List)
+		// این متد، باید لیستی از Host ها، با افزایش ID، هر کدام با لیست Pe خاص خود را برگرداند
+		//  (هر کدام باید یک نمونه متفاوت از Pe List داشته باشند)
 		List<HdfsHost> hostList = createHostList(hostNum, hostsPerRack, baseRackId, hostRam, hostStorageSize, hostBw, pesNum, mips);
 
 		// DatacenterCharacteristics
@@ -370,8 +376,7 @@ public class HdfsExample0 {
 
 	}
 
-	//We strongly encourage users to develop their own broker policies, to submit vms and cloudlets according
-	//to the specific rules of the simulated scenario
+	// کاربران VMS و کلودلت‌ها را مطابق با قوانین خاص سناریوی شبیه‌سازی شده ارسال میکنند.
 	private static HdfsDatacenterBroker createBroker(){
 
 		HdfsDatacenterBroker broker = null;
