@@ -198,6 +198,29 @@ public final class HdfsUtils{
      * Prints the Storage objects
      * @param list  Storage list from a single Datacenter
      */
+    public static void printStorageListTest(List<HdfsDatacenter> list){
+
+        String indent = "    ";
+        Log.printLine();
+        Log.printLine("========== STORAGE STATUS ==========");
+        for (HdfsDatacenter datacenter : list){
+            Log.printLine("Datacenter ID: " + (datacenter.getId()-1));
+
+            for (Storage drive : datacenter.getStorageList()){
+                HarddriveStorage tempDrive = (HarddriveStorage) drive;
+                HdfsHost tempHost = (HdfsHost) datacenter.getHostList().get(tempDrive.getHostId());
+                //Log.printLine("Rack ID : " + tempHost.getRackId());
+                Log.printLine(indent + "Rack ID : " + tempHost.getRackId() + ", Drive: " + drive.getName() + ", Maximum capacity: " + drive.getCapacity() +
+                        " MB, Used space: " + drive.getCurrentSize() + " MB, Free Space: " + drive.getAvailableSpace() + " MB, Utilization: " + drive.getUtilization() +"%" + ", current space: "  + drive.getAdditionalBitsTest() + " MB " + ", File list:" );
+                //Log.printLine(indent + indent + "File list: (Number of stored files: " + drive.getNumStoredFile() + ")");
+
+                for (String fileName : drive.getFileNameList()){
+                    Log.printLine(indent + indent + indent + "File: " + fileName);
+                }
+            }
+        }
+    }
+
     public static void printStorageList(List<HdfsDatacenter> list){
 
         String indent = "    ";
@@ -211,7 +234,7 @@ public final class HdfsUtils{
                 HdfsHost tempHost = (HdfsHost) datacenter.getHostList().get(tempDrive.getHostId());
                 //Log.printLine("Rack ID : " + tempHost.getRackId());
                 Log.printLine(indent + "Rack ID : " + tempHost.getRackId() + ", Drive: " + drive.getName() + ", Maximum capacity: " + drive.getCapacity() +
-                        " MB, Used space: " + drive.getCurrentSize() + " MB, Free Space: " + drive.getAvailableSpace() + " MB, utilization: " + drive.getUtilization() +"%" + ", additionalBits: "  + drive.getAdditionalBits() + " MB " + ", File list:" );
+                        " MB, Used space: " + drive.getCurrentSize() + " MB, Free Space: " + drive.getAvailableSpace() + " MB, current space: "  + drive.getAdditionalBits() + " MB " + ", File list:" );
                 //Log.printLine(indent + indent + "File list: (Number of stored files: " + drive.getNumStoredFile() + ")");
 
                 for (String fileName : drive.getFileNameList()){

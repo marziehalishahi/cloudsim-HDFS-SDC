@@ -75,12 +75,12 @@ public class HdfsExample0 {
 			int[] datacenterParametersClient = new int[]{datacenterPeMips, datacenterPeCount, datacenterHostCount-8, datacenterHostRam,
 					datacenterHostStorage, datacenterHostBw, datacenterDiskCount-8, datacenterDiskSize, datacenterHostsPerRack, datacenterBaseRackId};
 
-			// برای راحتی Datacenters را در یک لیست قرار دادیم، (به خصوص برای متد printStorageList)
+			// برای راحتی Datacenters را در یک لیست قرار دادیم.
 			datacenterList =  new ArrayList<HdfsDatacenter>();
 
 			// Client datacenter
 			HdfsDatacenter datacenter0 = createDatacenter("Datacenter_0", datacenterParametersClient);
-			// Data Nodes datacenter (شناسه کلودلت شروع باید متفاوت باشد)
+			// Data Nodes datacenter
 			HdfsDatacenter datacenter1 = createDatacenterDataNodes("Datacenter_1", 0, datacenterParameters);
 
 
@@ -90,7 +90,7 @@ public class HdfsExample0 {
 			HdfsDatacenterBroker broker = createBroker();
 			int brokerId = broker.getId();
 
-			// یک REPLICATION BROKER برای هر datacenter برای datanode (هر کدام با یک شناسه پایه cloudlet جدید)
+			// یک REPLICATION BROKER برای هر datacenter برای datanode
 			HdfsReplicationBroker replicationBroker = createBroker(100);
 			datacenter1.setReplicationBrokerId(replicationBroker.getId());
 			broker.getReplicationBrokersId().add(replicationBroker.getId());
@@ -311,7 +311,7 @@ public class HdfsExample0 {
 		HdfsDatacenter datacenter = null;
 		try {
 			datacenter = new HdfsDatacenter(name, characteristics, new VmAllocationPolicySimple(hostList), storageList, 0);
-			datacenterList.add(datacenter);
+//			datacenterList.add(datacenter);
 
 		} catch (Exception e) {
 			e.printStackTrace();

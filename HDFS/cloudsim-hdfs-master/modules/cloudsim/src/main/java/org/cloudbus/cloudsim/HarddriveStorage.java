@@ -162,7 +162,7 @@ public class HarddriveStorage implements Storage {
 	}
 
 	@Override
-	public double getAdditionalBits() {
+	public double getAdditionalBitsTest() {
 
 		if (this.getUtilization() >= 70 && this.getUtilization() <= 100) {
 			return getAvailableSpace() - 10000;
@@ -175,6 +175,11 @@ public class HarddriveStorage implements Storage {
 		}
         return 0;
     }
+
+	public double getAdditionalBits(){
+		return getAvailableSpace() - 10000;
+
+	}
 
 
 //    private void applyLevelOne(int dataNode, int additionalBits) {

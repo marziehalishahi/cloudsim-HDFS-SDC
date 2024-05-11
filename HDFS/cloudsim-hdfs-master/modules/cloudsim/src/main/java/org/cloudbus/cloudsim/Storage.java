@@ -61,6 +61,8 @@ public interface Storage {
 
 	double getUtilization();
 
+	double getAdditionalBitsTest();
+
 	double getAdditionalBits();
 
 
